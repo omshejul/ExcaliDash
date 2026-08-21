@@ -8,6 +8,7 @@ import {
   History,
   Loader2,
   Share2,
+  Sparkles,
 } from "lucide-react";
 import clsx from "clsx";
 import { Toaster } from "sonner";
@@ -24,6 +25,7 @@ interface Peer extends UserIdentity {
 type EditorViewProps = {
   id?: string;
   accessLevel: "none" | "view" | "edit" | "owner";
+  aiDiagramsEnabled: boolean;
   autoHideEnabled: boolean;
   canEdit: boolean;
   drawingName: string;
@@ -52,6 +54,7 @@ type EditorViewProps = {
   onRenameSubmit: (event: React.FormEvent) => void;
   onSetExcalidrawAPI: (api: any) => void;
   onSetLangCode: (langCode: string) => void;
+  onGenerateDiagramOpen: () => void;
   onShareOpen: () => void;
   onHistoryOpen: () => void;
   onToggleAutoHide: () => void;
@@ -85,6 +88,7 @@ const UserAvatar = ({
 export const EditorView: React.FC<EditorViewProps> = ({
   id,
   accessLevel,
+  aiDiagramsEnabled,
   autoHideEnabled,
   canEdit,
   drawingName,
@@ -113,6 +117,7 @@ export const EditorView: React.FC<EditorViewProps> = ({
   onRenameSubmit,
   onSetExcalidrawAPI,
   onSetLangCode,
+  onGenerateDiagramOpen,
   onShareOpen,
   onHistoryOpen,
   onToggleAutoHide,
@@ -165,6 +170,16 @@ export const EditorView: React.FC<EditorViewProps> = ({
           <span className="text-xs font-semibold px-2 py-1 rounded-full bg-amber-100 text-amber-900 dark:bg-amber-900/30 dark:text-amber-200 border border-amber-200 dark:border-amber-800">
             Read-only
           </span>
+        ) : null}
+        {canEdit && aiDiagramsEnabled ? (
+          <button
+            onClick={onGenerateDiagramOpen}
+            className="flex min-h-10 items-center gap-2 rounded-lg px-3 text-sm font-semibold text-indigo-700 hover:bg-indigo-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:text-indigo-300 dark:hover:bg-indigo-950/40"
+            title="Generate diagram with Gemini"
+          >
+            <Sparkles size={18} />
+            <span className="hidden sm:inline">AI diagram</span>
+          </button>
         ) : null}
         {canEdit && id ? (
           <button

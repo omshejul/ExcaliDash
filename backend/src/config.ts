@@ -11,6 +11,10 @@ import {
   validatePasswordAgainstPolicy,
 } from "./config/passwordPolicy";
 import { validateProductionConfig } from "./config/production";
+import {
+  type AiDiagramConfig,
+  resolveAiDiagramConfig,
+} from "./config/aiDiagram";
 
 export { buildPasswordPolicyMessage, validatePasswordAgainstPolicy };
 
@@ -54,6 +58,7 @@ interface Config {
   passwordPolicy: PasswordPolicyConfig;
   backups: BackupConfig;
   s3: S3Config;
+  aiDiagram: AiDiagramConfig;
 }
 
 export type AuthMode = "local" | "hybrid" | "oidc_enforced";
@@ -378,6 +383,11 @@ export const config: Config = {
   passwordPolicy: resolvePasswordPolicyConfig(getRequiredEnvNumber, getOptionalBoolean),
   backups: resolveBackupConfig(),
   s3: resolveS3Config(),
+  aiDiagram: resolveAiDiagramConfig({
+    getOptionalTrimmedEnv,
+    getOptionalBoolean,
+    getRequiredEnvNumber,
+  }),
 };
 
 if (config.nodeEnv === "production") {

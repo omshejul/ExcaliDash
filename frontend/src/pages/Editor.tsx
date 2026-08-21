@@ -19,6 +19,7 @@ import { useEditorCanvasHandlers } from "./editor/useEditorCanvasHandlers";
 import { useEditorCommands } from "./editor/useEditorCommands";
 import { useEditorElementTracking } from "./editor/useEditorElementTracking";
 import { useEditorBroadcast } from "./editor/useEditorBroadcast";
+import { useAiDiagram } from "./editor/useAiDiagram";
 export const Editor: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -86,6 +87,10 @@ export const Editor: React.FC = () => {
   const lastLocalChangeAtRef = useRef<number>(0);
   const editorContainerRef = useRef<HTMLDivElement>(null);
   const excalidrawAPI = useRef<any>(null);
+  const aiDiagram = useAiDiagram({
+    canEdit,
+    excalidrawAPIRef: excalidrawAPI,
+  });
   const { resolveSafeSnapshot, normalizeImageElementStatus } =
     useEditorSnapshotGuards({
       lastPersistedElementsRef,
@@ -369,6 +374,8 @@ export const Editor: React.FC = () => {
         onRenameSubmit={handleRenameSubmit}
         onSetExcalidrawAPI={setExcalidrawAPI}
         onSetLangCode={setLangCode}
+        aiDiagramsEnabled={aiDiagram.enabled}
+        onGenerateDiagramOpen={aiDiagram.open}
         onShareOpen={() => setIsShareOpen(true)}
         onHistoryOpen={() => setIsHistoryOpen(true)}
         onToggleAutoHide={handleToggleAutoHide}
@@ -377,11 +384,15 @@ export const Editor: React.FC = () => {
         drawingId={id}
         drawingName={drawingName}
         excalidrawAPIRef={excalidrawAPI}
+        aiDiagramModel={aiDiagram.model}
+        isGenerateDiagramOpen={aiDiagram.isOpen}
         isHistoryOpen={isHistoryOpen}
         isShareOpen={isShareOpen}
         previewBackupRef={previewBackup}
+        onCloseGenerateDiagram={aiDiagram.close}
         onCloseHistory={() => setIsHistoryOpen(false)}
         onCloseShare={() => setIsShareOpen(false)}
+        onInsertAiDiagram={aiDiagram.insert}
       />
     </>
   );

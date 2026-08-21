@@ -217,6 +217,10 @@ Base values are documented in `backend/.env.example`. Common ones to care about:
 | `PASSWORD_MIN_LENGTH` | `12` | Local-auth password minimum length. Combine with `PASSWORD_REQUIRE_*` flags to relax or enforce complexity. |
 | `BACKUP_SCHEDULE` | unset | Optional 5- or 6-field cron expression for scheduled SQLite backups, e.g. `0 0 4 * * *`. |
 | `BACKUP_DIR` | `/app/backups` | Directory where scheduled SQLite backup files are written. Mount this to persistent storage. |
+| `AI_DIAGRAMS_ENABLED` | `false` in production Compose | Enables Gemini diagram generation when `GEMINI_API_KEY` is also set. |
+| `GEMINI_API_KEY` | unset | Backend-only Gemini API key. Never expose it through a frontend variable. |
+| `GEMINI_MODEL` | `gemini-2.5-flash` | Gemini model used to generate Mermaid definitions. |
+| `GEMINI_TIMEOUT_MS` | `30000` | Maximum time for one Gemini request. |
 
 </details>
 

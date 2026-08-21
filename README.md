@@ -37,6 +37,13 @@ A self-hosted dashboard and organizer for [Excalidraw](https://github.com/excali
 </details>
 
 <details>
+<summary>Optional Gemini diagram generation</summary>
+
+Describe a process in plain language and insert the generated result as editable Excalidraw elements. Configure `GEMINI_API_KEY` on the backend to enable the editor button. Only the prompt typed into the generator is sent to Gemini.
+
+</details>
+
+<details>
 <summary>Version history and restore</summary>
 
 Automatically retain recent drawing snapshots, preview past versions from the editor, and restore a previous state when needed.

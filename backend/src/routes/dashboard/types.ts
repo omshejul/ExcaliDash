@@ -51,6 +51,12 @@ export type DashboardRouteDeps = {
   config: {
     nodeEnv: string;
     enableAuditLogging: boolean;
+    aiDiagram: {
+      enabled: boolean;
+      apiKey: string | null;
+      model: string;
+      timeoutMs: number;
+    };
   };
   logAuditEvent: LogAuditEvent;
   processFilesForS3: (

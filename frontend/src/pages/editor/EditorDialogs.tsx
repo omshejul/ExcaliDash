@@ -2,6 +2,7 @@ import React from "react";
 import { CaptureUpdateAction } from "@excalidraw/excalidraw";
 import { ShareModal } from "../../components/ShareModal";
 import { HistoryPanel } from "../../components/HistoryPanel";
+import { GenerateDiagramDialog } from "../../components/GenerateDiagramDialog";
 
 type PreviewBackup = {
   elements: readonly any[];
@@ -12,28 +13,42 @@ type PreviewBackup = {
 type EditorDialogsProps = {
   drawingId?: string;
   drawingName: string;
+  aiDiagramModel: string | null;
   excalidrawAPIRef: React.MutableRefObject<any>;
   isHistoryOpen: boolean;
+  isGenerateDiagramOpen: boolean;
   isShareOpen: boolean;
   previewBackupRef: React.MutableRefObject<PreviewBackup | null>;
   onCloseHistory: () => void;
+  onCloseGenerateDiagram: () => void;
   onCloseShare: () => void;
+  onInsertAiDiagram: (mermaid: string) => Promise<number>;
 };
 
 export const EditorDialogs: React.FC<EditorDialogsProps> = ({
   drawingId,
   drawingName,
+  aiDiagramModel,
   excalidrawAPIRef,
   isHistoryOpen,
+  isGenerateDiagramOpen,
   isShareOpen,
   previewBackupRef,
   onCloseHistory,
+  onCloseGenerateDiagram,
   onCloseShare,
+  onInsertAiDiagram,
 }) => {
   if (!drawingId) return null;
 
   return (
     <>
+      <GenerateDiagramDialog
+        isOpen={isGenerateDiagramOpen}
+        model={aiDiagramModel}
+        onClose={onCloseGenerateDiagram}
+        onInsert={onInsertAiDiagram}
+      />
       <ShareModal
         drawingId={drawingId}
         drawingName={drawingName}

@@ -13,7 +13,6 @@ type PreviewBackup = {
 type EditorDialogsProps = {
   drawingId?: string;
   drawingName: string;
-  aiDiagramModel: string | null;
   excalidrawAPIRef: React.MutableRefObject<any>;
   isHistoryOpen: boolean;
   isGenerateDiagramOpen: boolean;
@@ -28,7 +27,6 @@ type EditorDialogsProps = {
 export const EditorDialogs: React.FC<EditorDialogsProps> = ({
   drawingId,
   drawingName,
-  aiDiagramModel,
   excalidrawAPIRef,
   isHistoryOpen,
   isGenerateDiagramOpen,
@@ -45,7 +43,6 @@ export const EditorDialogs: React.FC<EditorDialogsProps> = ({
     <>
       <GenerateDiagramDialog
         isOpen={isGenerateDiagramOpen}
-        model={aiDiagramModel}
         onClose={onCloseGenerateDiagram}
         onInsert={onInsertAiDiagram}
       />

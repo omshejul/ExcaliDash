@@ -33,11 +33,11 @@ describe("GenerateDiagramDialog", () => {
     render(
       <GenerateDiagramDialog
         isOpen
-        model="gemini-test"
         onClose={onClose}
         onInsert={onInsert}
       />,
     );
+    expect(screen.queryByText("gemini-test")).not.toBeInTheDocument();
 
     fireEvent.change(
       screen.getByLabelText("What should the diagram explain?"),
@@ -73,7 +73,6 @@ describe("GenerateDiagramDialog", () => {
     render(
       <GenerateDiagramDialog
         isOpen
-        model="gemini-test"
         onClose={vi.fn()}
         onInsert={onInsert}
       />,
@@ -97,7 +96,6 @@ describe("GenerateDiagramDialog", () => {
     render(
       <GenerateDiagramDialog
         isOpen
-        model="gemini-test"
         onClose={vi.fn()}
         onInsert={vi.fn()}
       />,

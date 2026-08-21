@@ -8,7 +8,6 @@ import { appear } from "../utils/motion";
 
 type Props = {
   isOpen: boolean;
-  model: string | null;
   onClose: () => void;
   onInsert: (mermaid: string) => Promise<number>;
 };
@@ -29,7 +28,6 @@ const getErrorMessage = (error: unknown): string => {
 
 export const GenerateDiagramDialog: React.FC<Props> = ({
   isOpen,
-  model,
   onClose,
   onInsert,
 }) => {
@@ -182,10 +180,7 @@ export const GenerateDiagramDialog: React.FC<Props> = ({
               </AnimatePresence>
             </div>
 
-            <div className="flex items-center justify-between gap-4 border-t-2 border-black bg-neutral-50 px-5 py-4 dark:border-neutral-700 dark:bg-neutral-800/50 sm:px-6">
-              <span className="hidden text-xs text-neutral-500 dark:text-neutral-400 sm:block">
-                {model || "Gemini"}
-              </span>
+            <div className="flex items-center justify-end gap-4 border-t-2 border-black bg-neutral-50 px-5 py-4 dark:border-neutral-700 dark:bg-neutral-800/50 sm:px-6">
               <div className="ml-auto flex gap-3">
                 <button
                   type="button"

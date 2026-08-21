@@ -13,13 +13,11 @@ export const useAiDiagram = ({
   excalidrawAPIRef,
 }: UseAiDiagramInput) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [model, setModel] = useState<string | null>(null);
   const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {
     if (!canEdit) {
       setEnabled(false);
-      setModel(null);
       setIsOpen(false);
       return;
     }
@@ -29,12 +27,10 @@ export const useAiDiagram = ({
       .then((status) => {
         if (!active) return;
         setEnabled(status.enabled);
-        setModel(status.model);
       })
       .catch(() => {
         if (!active) return;
         setEnabled(false);
-        setModel(null);
       });
     return () => {
       active = false;
@@ -55,7 +51,6 @@ export const useAiDiagram = ({
     enabled,
     insert,
     isOpen,
-    model,
     close: () => setIsOpen(false),
     open: () => setIsOpen(true),
   };

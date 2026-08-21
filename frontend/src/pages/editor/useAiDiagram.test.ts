@@ -28,7 +28,6 @@ describe("useAiDiagram", () => {
     );
 
     await waitFor(() => expect(result.current.enabled).toBe(true));
-    expect(result.current.model).toBe("gemini-test");
     act(() => result.current.open());
     expect(result.current.isOpen).toBe(true);
   });

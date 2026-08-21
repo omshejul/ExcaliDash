@@ -384,7 +384,6 @@ export const Editor: React.FC = () => {
         drawingId={id}
         drawingName={drawingName}
         excalidrawAPIRef={excalidrawAPI}
-        aiDiagramModel={aiDiagram.model}
         isGenerateDiagramOpen={aiDiagram.isOpen}
         isHistoryOpen={isHistoryOpen}
         isShareOpen={isShareOpen}

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { MutableRefObject, RefObject } from "react";
+import type { MutableRefObject } from "react";
 import { io, type Socket } from "socket.io-client";
 import { toast } from "sonner";
 import type { UserIdentity } from "../../utils/identity";
@@ -14,7 +14,6 @@ type UseEditorCollaborationInput = {
   me: UserIdentity;
   isReady: boolean;
   excalidrawAPI: MutableRefObject<any>;
-  editorContainerRef: RefObject<HTMLDivElement>;
   lastSyncedFilesRef: MutableRefObject<Record<string, any>>;
   lastSyncedElementOrderSigRef: MutableRefObject<string>;
   latestElementsRef: MutableRefObject<readonly any[]>;
@@ -36,7 +35,6 @@ export const useEditorCollaboration = ({
   me,
   isReady,
   excalidrawAPI,
-  editorContainerRef,
   lastSyncedFilesRef,
   lastSyncedElementOrderSigRef,
   latestElementsRef,
@@ -286,43 +284,7 @@ export const useEditorCollaboration = ({
     window.addEventListener("blur", onBlur);
     document.addEventListener("mouseenter", onMouseEnter);
     document.addEventListener("mouseleave", onMouseLeave);
-    const container = editorContainerRef.current;
-    const handleWheel = (event: WheelEvent) => {
-      const target = event.target as HTMLElement | null;
-      if (!target) return;
-      const isCanvas = target.tagName?.toLowerCase() === "canvas";
-      const isEditorUi =
-        target.closest(".layer-ui__wrapper") !== null ||
-        target.closest(".App-menu") !== null;
-      if (
-        isCanvas &&
-        !isEditorUi &&
-        !event.ctrlKey &&
-        !event.metaKey &&
-        !(event as any)._isFakeZoom
-      ) {
-        event.preventDefault();
-        event.stopPropagation();
-        const zoomEvent = new WheelEvent("wheel", {
-          bubbles: true,
-          cancelable: true,
-          clientX: event.clientX,
-          clientY: event.clientY,
-          deltaX: event.deltaX,
-          deltaY: event.deltaY,
-          deltaMode: event.deltaMode,
-          ctrlKey: true,
-        });
-        (zoomEvent as any)._isFakeZoom = true;
-        target.dispatchEvent(zoomEvent);
-      }
-    };
-    container?.addEventListener("wheel", handleWheel, {
-      capture: true,
-      passive: false,
-    });
     return () => {
-      container?.removeEventListener("wheel", handleWheel, { capture: true });
       window.removeEventListener("focus", onFocus);
       window.removeEventListener("blur", onBlur);
       document.removeEventListener("mouseenter", onMouseEnter);
@@ -348,7 +310,6 @@ export const useEditorCollaboration = ({
     me,
     isReady,
     excalidrawAPI,
-    editorContainerRef,
     lastSyncedFilesRef,
     lastSyncedElementOrderSigRef,
     latestElementsRef,

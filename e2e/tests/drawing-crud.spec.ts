@@ -147,6 +147,63 @@ test.describe("Drawing Editing", () => {
     createdDrawingIds = [];
   });
 
+  test("should pan on a plain wheel and zoom on a modifier wheel", async ({
+    page,
+    request,
+  }) => {
+    const drawing = await createDrawing(request, {
+      name: `Canvas_Navigation_${Date.now()}`,
+      elements: [],
+    });
+    createdDrawingIds.push(drawing.id);
+
+    await page.goto(`/editor/${drawing.id}`);
+
+    const canvas = page.locator("canvas.excalidraw__canvas.interactive");
+    await expect(canvas).toBeVisible();
+    await page.waitForFunction(
+      () => Boolean((window as any).__EXCALIDASH_EXCALIDRAW_API__),
+    );
+
+    const readViewport = () =>
+      page.evaluate(() => {
+        const appState = (
+          window as any
+        ).__EXCALIDASH_EXCALIDRAW_API__.getAppState();
+        return {
+          zoom: appState.zoom.value as number,
+          scrollX: appState.scrollX as number,
+          scrollY: appState.scrollY as number,
+        };
+      });
+
+    const box = await canvas.boundingBox();
+    if (!box) throw new Error("Canvas not found");
+
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    const beforePan = await readViewport();
+    await page.mouse.wheel(0, 120);
+
+    await expect.poll(async () => (await readViewport()).scrollY).not.toBe(
+      beforePan.scrollY,
+    );
+    const afterPan = await readViewport();
+    expect(afterPan.zoom).toBe(beforePan.zoom);
+
+    await canvas.dispatchEvent("wheel", {
+      bubbles: true,
+      cancelable: true,
+      clientX: box.x + box.width / 2,
+      clientY: box.y + box.height / 2,
+      deltaY: 120,
+      ctrlKey: true,
+    });
+
+    await expect.poll(async () => (await readViewport()).zoom).not.toBe(
+      afterPan.zoom,
+    );
+  });
+
   test("should draw a rectangle on canvas", async ({ page, request }) => {
     const drawing = await createDrawing(request, {
       name: `Draw_Rect_${Date.now()}`,

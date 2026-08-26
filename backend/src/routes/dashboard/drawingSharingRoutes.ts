@@ -30,7 +30,7 @@ export const registerDrawingSharingRoutes = (
       const { id } = req.params;
       const qRaw = typeof req.query.q === "string" ? req.query.q.trim() : "";
       const q = qRaw.toLowerCase();
-      if (q.length < 3) return res.json({ users: [] });
+      if (q.length < 1) return res.json({ users: [] });
 
       const drawing = await prisma.drawing.findUnique({
         where: { id },

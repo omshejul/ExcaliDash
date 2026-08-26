@@ -112,7 +112,7 @@ export const ShareModal: React.FC<Props> = ({
   useEffect(() => {
     if (!isOpen) return;
     const q = userQuery.trim();
-    if (q.length < 3) {
+    if (q.length < 1) {
       setUserResults([]);
       return;
     }

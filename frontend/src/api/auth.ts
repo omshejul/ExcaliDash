@@ -54,6 +54,8 @@ export interface UserPreferences {
   theme?: "light" | "dark";
   dashboardSortField?: DrawingSortField;
   dashboardSortDirection?: SortDirection;
+  emailShareInvitations?: boolean;
+  emailCollaborationJoins?: boolean;
 }
 
 export interface ApiKeyMetadata {

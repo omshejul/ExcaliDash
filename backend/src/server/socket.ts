@@ -10,6 +10,10 @@ import {
   canViewDrawing,
   type DrawingPrincipal,
 } from "../authz/sharing";
+import {
+  shouldSendJoinAlert,
+  type CollaborationEmailNotifier,
+} from "../email/collaborationEmail";
 
 interface User {
   id: string;
@@ -25,6 +29,7 @@ type RegisterSocketHandlersDeps = {
   prisma: PrismaClient;
   authModeService: AuthModeService;
   jwtSecret: string;
+  collaborationEmailNotifier: CollaborationEmailNotifier;
 };
 
 export const registerSocketHandlers = ({
@@ -32,6 +37,7 @@ export const registerSocketHandlers = ({
   prisma,
   authModeService,
   jwtSecret,
+  collaborationEmailNotifier,
 }: RegisterSocketHandlersDeps) => {
   const roomUsers = new Map<string, User[]>();
   const socketPrincipalMap = new Map<string, DrawingPrincipal>();
@@ -216,6 +222,38 @@ export const registerSocketHandlers = ({
                 color: newUser.color,
               },
             });
+          }
+
+          if (access !== "owner" && collaborationEmailNotifier.enabled) {
+            const drawing = await prisma.drawing.findUnique({
+              where: { id: drawingId },
+              select: {
+                id: true,
+                name: true,
+                user: {
+                  select: {
+                    email: true,
+                    name: true,
+                    preferences: true,
+                  },
+                },
+              },
+            });
+            if (drawing && shouldSendJoinAlert(drawing.user.preferences)) {
+              const isAnonymous = principal === null;
+              void collaborationEmailNotifier.sendJoinAlert({
+                drawingId: drawing.id,
+                drawingName: drawing.name,
+                joiningUserKey: isAnonymous
+                  ? "anonymous-link-visitor"
+                  : trustedUserId,
+                joiningUserName: isAnonymous
+                  ? "A link visitor"
+                  : trustedName,
+                recipientEmail: drawing.user.email,
+                recipientName: drawing.user.name,
+              });
+            }
           }
         } catch (err) {
           console.error("Error in join-room handler:", err);

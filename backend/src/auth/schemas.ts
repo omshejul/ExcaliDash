@@ -138,4 +138,6 @@ export const userPreferencesSchema = z.object({
   theme: z.enum(["light", "dark"]).optional(),
   dashboardSortField: z.enum(["name", "createdAt", "updatedAt"]).optional(),
   dashboardSortDirection: z.enum(["asc", "desc"]).optional(),
+  emailShareInvitations: z.boolean().optional(),
+  emailCollaborationJoins: z.boolean().optional(),
 }).strict();

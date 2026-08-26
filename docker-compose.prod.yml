@@ -19,6 +19,9 @@ services:
       - GEMINI_API_KEY=${GEMINI_API_KEY}
       - GEMINI_MODEL=${GEMINI_MODEL:-gemini-2.5-flash}
       - GEMINI_TIMEOUT_MS=${GEMINI_TIMEOUT_MS:-30000}
+      - RESEND_KEY=${RESEND_KEY}
+      - DOMAIN=${DOMAIN}
+      - EMAIL_JOIN_COOLDOWN_MS=${EMAIL_JOIN_COOLDOWN_MS:-21600000}
       # Optional OIDC settings (required for AUTH_MODE=hybrid or oidc_enforced)
       # - OIDC_PROVIDER_NAME=Authentik
       # - OIDC_ISSUER_URL=https://auth.example.com/application/o/excalidash/

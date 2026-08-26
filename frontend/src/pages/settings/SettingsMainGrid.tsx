@@ -1,4 +1,4 @@
-import { Archive, Moon, Sun, Zap, ZapOff } from "lucide-react";
+import { Archive, Mail, Moon, Sun, Zap, ZapOff } from "lucide-react";
 import type * as api from "../../api";
 import { UpdateSettingsCard } from "./UpdateSettingsCard";
 
@@ -10,6 +10,13 @@ type SettingsMainGridProps = {
   toggleTheme: () => void;
   imageCompression: boolean;
   toggleImageCompression: () => void;
+  showEmailAlerts: boolean;
+  emailShareInvitations: boolean;
+  emailCollaborationJoins: boolean;
+  emailPreferencesLoading: boolean;
+  emailPreferencesError: string | null;
+  onToggleEmailShareInvitations: () => void;
+  onToggleEmailCollaborationJoins: () => void;
   updateChannel: api.UpdateChannel;
   updateInfo: api.UpdateInfo | null;
   updateLoading: boolean;
@@ -26,6 +33,13 @@ export const SettingsMainGrid = ({
   toggleTheme,
   imageCompression,
   toggleImageCompression,
+  showEmailAlerts,
+  emailShareInvitations,
+  emailCollaborationJoins,
+  emailPreferencesLoading,
+  emailPreferencesError,
+  onToggleEmailShareInvitations,
+  onToggleEmailCollaborationJoins,
   updateChannel,
   updateInfo,
   updateLoading,
@@ -163,6 +177,60 @@ export const SettingsMainGrid = ({
         </p>{" "}
       </div>{" "}
     </button>{" "}
+    {showEmailAlerts && (
+      <section className="flex flex-col gap-4 p-4 sm:p-6 lg:p-8 bg-white dark:bg-neutral-900 border-2 border-black dark:border-neutral-700 rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.2)]">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 bg-emerald-50 dark:bg-neutral-800 rounded-2xl flex items-center justify-center border-2 border-emerald-100 dark:border-neutral-700">
+            <Mail size={24} className="text-emerald-700 dark:text-emerald-400" />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+              Email alerts
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-neutral-400 font-medium">
+              Collaboration activity sent to your account email
+            </p>
+          </div>
+        </div>
+        <div className="space-y-3">
+          <button
+            type="button"
+            role="switch"
+            aria-checked={emailShareInvitations}
+            disabled={emailPreferencesLoading}
+            onClick={onToggleEmailShareInvitations}
+            className="w-full min-h-11 flex items-center justify-between gap-4 text-left disabled:opacity-50"
+          >
+            <span className="text-sm font-bold text-slate-800 dark:text-neutral-100">
+              Drawing invitations
+            </span>
+            <span className={`relative h-6 w-11 shrink-0 rounded-full border-2 border-black dark:border-neutral-600 transition-colors ${emailShareInvitations ? "bg-indigo-600" : "bg-slate-200 dark:bg-neutral-700"}`}>
+              <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white border border-black transition-transform ${emailShareInvitations ? "translate-x-5" : "translate-x-0.5"}`} />
+            </span>
+          </button>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={emailCollaborationJoins}
+            disabled={emailPreferencesLoading}
+            onClick={onToggleEmailCollaborationJoins}
+            className="w-full min-h-11 flex items-center justify-between gap-4 text-left disabled:opacity-50"
+          >
+            <span className="text-sm font-bold text-slate-800 dark:text-neutral-100">
+              Someone joins my drawing
+            </span>
+            <span className={`relative h-6 w-11 shrink-0 rounded-full border-2 border-black dark:border-neutral-600 transition-colors ${emailCollaborationJoins ? "bg-indigo-600" : "bg-slate-200 dark:bg-neutral-700"}`}>
+              <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white border border-black transition-transform ${emailCollaborationJoins ? "translate-x-5" : "translate-x-0.5"}`} />
+            </span>
+          </button>
+        </div>
+        {emailPreferencesError && (
+          <p className="text-xs font-medium text-red-700 dark:text-red-300" role="alert">
+            {emailPreferencesError}
+          </p>
+        )}
+      </section>
+    )}
     <UpdateSettingsCard
       updateChannel={updateChannel}
       updateInfo={updateInfo}

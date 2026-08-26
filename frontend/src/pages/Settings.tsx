@@ -9,6 +9,7 @@ import { SettingsMainGrid } from "./settings/SettingsMainGrid";
 import { AdvancedSettings } from "./settings/AdvancedSettings";
 import { SettingsConfirmModals } from "./settings/SettingsConfirmModals";
 import { displayFontFamily } from "../utils/displayFont";
+import { useEmailAlertPreferences } from "./settings/useEmailAlertPreferences";
 export const Settings: React.FC = () => {
   const [collections, setCollections] = useState<Collection[]>([]);
   const navigate = useNavigate();
@@ -35,6 +36,7 @@ export const Settings: React.FC = () => {
   const [legacyDbImportLoading, setLegacyDbImportLoading] = useState(false);
   const [authToggleLoading, setAuthToggleLoading] = useState(false);
   const [authToggleError, setAuthToggleError] = useState<string | null>(null);
+  const emailAlerts = useEmailAlertPreferences(Boolean(authEnabled), user?.id);
   const [authToggleConfirm, setAuthToggleConfirm] = useState<{
     isOpen: boolean;
     nextEnabled: boolean | null;
@@ -318,6 +320,17 @@ export const Settings: React.FC = () => {
         toggleTheme={toggleTheme}
         imageCompression={imageCompression}
         toggleImageCompression={toggleImageCompression}
+        showEmailAlerts={Boolean(authEnabled && user)}
+        emailShareInvitations={emailAlerts.preferences.emailShareInvitations}
+        emailCollaborationJoins={emailAlerts.preferences.emailCollaborationJoins}
+        emailPreferencesLoading={emailAlerts.loading}
+        emailPreferencesError={emailAlerts.error}
+        onToggleEmailShareInvitations={() =>
+          void emailAlerts.toggle("emailShareInvitations")
+        }
+        onToggleEmailCollaborationJoins={() =>
+          void emailAlerts.toggle("emailCollaborationJoins")
+        }
         updateChannel={updateChannel}
         updateInfo={updateInfo}
         updateLoading={updateLoading}

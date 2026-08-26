@@ -1,6 +1,7 @@
 import express from "express";
 import { z } from "zod";
 import { Prisma, PrismaClient } from "../../generated/client";
+import type { CollaborationEmailNotifier } from "../../email/collaborationEmail";
 
 export type SortField = "name" | "createdAt" | "updatedAt";
 export type SortDirection = "asc" | "desc";
@@ -59,6 +60,7 @@ export type DashboardRouteDeps = {
     };
   };
   logAuditEvent: LogAuditEvent;
+  collaborationEmailNotifier: CollaborationEmailNotifier;
   processFilesForS3: (
     files: Record<string, any>,
     userId: string,

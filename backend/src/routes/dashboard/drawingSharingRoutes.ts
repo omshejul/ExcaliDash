@@ -5,6 +5,7 @@ import {
   normalizeDrawingPermission,
 } from "../../authz/sharing";
 import type { DrawingRouteContext } from "./drawingRouteContext";
+import { shouldSendShareInvitation } from "../../email/collaborationEmail";
 
 export const registerDrawingSharingRoutes = (
   app: express.Express,
@@ -17,6 +18,7 @@ export const registerDrawingSharingRoutes = (
     invalidateDrawingsCache,
     config,
     logAuditEvent,
+    collaborationEmailNotifier,
     resolveDefaultTtlMs,
     resolveMaxTtlMs,
   } = context;
@@ -114,7 +116,7 @@ export const registerDrawingSharingRoutes = (
 
       const drawing = await prisma.drawing.findUnique({
         where: { id },
-        select: { userId: true },
+        select: { userId: true, name: true },
       });
       if (!drawing || drawing.userId !== req.user.id) {
         return res.status(404).json({ error: "Drawing not found" });
@@ -140,12 +142,16 @@ export const registerDrawingSharingRoutes = (
 
       const user = await prisma.user.findUnique({
         where: { id: granteeUserId },
-        select: { id: true, isActive: true },
+        select: { id: true, isActive: true, email: true, name: true, preferences: true },
       });
       if (!user || !user.isActive) {
         return res.status(404).json({ error: "User not found" });
       }
 
+      const existingPermission = await prisma.drawingPermission.findUnique({
+        where: { drawingId_granteeUserId: { drawingId: id, granteeUserId } },
+        select: { id: true },
+      });
       const saved = await prisma.drawingPermission.upsert({
         where: {
           drawingId_granteeUserId: { drawingId: id, granteeUserId },
@@ -177,6 +183,17 @@ export const registerDrawingSharingRoutes = (
           ipAddress: req.ip || req.connection.remoteAddress || undefined,
           userAgent: req.headers["user-agent"] || undefined,
           details: { drawingId: id, granteeUserId, permission },
+        });
+      }
+
+      const shouldNotify = !existingPermission && collaborationEmailNotifier.enabled &&
+        shouldSendShareInvitation(user.preferences);
+      if (shouldNotify) {
+        void collaborationEmailNotifier.sendShareInvitation({
+          drawingId: id, drawingName: drawing.name,
+          inviterName: req.user.name, permission,
+          recipientEmail: user.email, recipientName: user.name,
+          permissionId: saved.id,
         });
       }
 

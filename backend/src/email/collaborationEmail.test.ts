@@ -42,6 +42,9 @@ describe("collaboration email notifier", () => {
     }));
     expect(String(request?.body)).toContain("Books &amp; records");
     expect(String(request?.body)).toContain("https://draw.example.com/editor/drawing-1");
+    expect(String(request?.body)).toContain("New drawing invitation");
+    expect(String(request?.body)).toContain("ExcaliDash collaboration notification");
+    expect(String(request?.body)).not.toContain("email settings");
   });
 
   it("limits join alerts by drawing and collaborator", async () => {
@@ -66,6 +69,10 @@ describe("collaboration email notifier", () => {
     expect(await notifier.sendJoinAlert(input)).toBe(true);
     expect(await notifier.sendJoinAlert(input)).toBe(false);
     expect(fetchImpl).toHaveBeenCalledTimes(1);
+    const [, firstRequest] = vi.mocked(fetchImpl).mock.calls[0];
+    expect(String(firstRequest?.body)).toContain("Live collaboration activity");
+    expect(String(firstRequest?.body)).toContain("Keith joined your drawing.");
+    expect(String(firstRequest?.body)).not.toContain("email settings");
 
     currentTime += 1_001;
     expect(await notifier.sendJoinAlert(input)).toBe(true);

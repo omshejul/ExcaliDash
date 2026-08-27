@@ -8,7 +8,7 @@ import {
 import { DashboardRouteDeps } from "./types";
 
 const diagramPromptSchema = z.object({
-  prompt: z.string().trim().min(8).max(4_000),
+  prompt: z.string().trim().min(8),
 });
 
 export const registerAiDiagramRoutes = (
@@ -53,7 +53,7 @@ export const registerAiDiagramRoutes = (
       if (!parsed.success) {
         return res.status(400).json({
           error: "Validation error",
-          message: "Describe the diagram in 8 to 4,000 characters.",
+          message: "Describe the diagram in at least 8 characters.",
         });
       }
 

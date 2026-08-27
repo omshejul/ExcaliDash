@@ -76,6 +76,18 @@ describe("AI diagram routes", () => {
     );
   });
 
+  it("accepts prompts longer than 4,000 characters", async () => {
+    const { app, generate } = makeApp(makeDeps(true));
+    const prompt = `Show this system: ${"step ".repeat(1_000)}done`;
+    const response = await request(app).post("/ai/diagram").send({ prompt });
+
+    expect(response.status).toBe(200);
+    expect(generate).toHaveBeenCalledWith(
+      prompt,
+      expect.objectContaining({ model: "gemini-test" }),
+    );
+  });
+
   it("rejects invalid prompts and disabled configuration", async () => {
     const enabledApp = makeApp(makeDeps(true)).app;
     const invalid = await request(enabledApp)

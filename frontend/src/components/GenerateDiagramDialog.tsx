@@ -64,10 +64,7 @@ export const GenerateDiagramDialog: React.FC<Props> = ({
       try {
         insertedCount = await onInsert(generated.mermaid);
       } catch {
-        const retryPrompt = `${value.slice(
-          0,
-          3_850,
-        )}\n\nReturn strict Mermaid. Use no edge-label colons in flowcharts.`;
+        const retryPrompt = `${value}\n\nReturn strict Mermaid. Use no edge-label colons in flowcharts.`;
         const retry = await api.generateAiDiagram(retryPrompt);
         insertedCount = await onInsert(retry.mermaid);
       }
@@ -139,16 +136,14 @@ export const GenerateDiagramDialog: React.FC<Props> = ({
                   id="diagram-prompt"
                   autoFocus
                   rows={5}
-                  maxLength={4_000}
                   value={prompt}
                   onChange={(event) => setPrompt(event.target.value)}
                   placeholder="Example: Show how a customer order moves through checkout, payment, fulfillment, and delivery"
                   className="w-full resize-y rounded-xl border-2 border-neutral-300 bg-white px-4 py-3 text-base text-neutral-950 outline-none placeholder:text-neutral-400 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-200 dark:border-neutral-700 dark:bg-neutral-950 dark:text-white dark:focus:border-indigo-400 dark:focus:ring-indigo-950"
                 />
-                <div className="mt-2 flex justify-between gap-3 text-xs text-neutral-500 dark:text-neutral-400">
-                  <span>Only this prompt is sent to Gemini.</span>
-                  <span className="tabular-nums">{prompt.length}/4,000</span>
-                </div>
+                <p className="mt-2 text-xs text-neutral-500 dark:text-neutral-400">
+                  Only this prompt is sent to Gemini.
+                </p>
               </div>
 
               <div className="flex flex-wrap gap-2" aria-label="Prompt examples">

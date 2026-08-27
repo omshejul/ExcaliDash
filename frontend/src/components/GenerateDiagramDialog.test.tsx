@@ -59,6 +59,30 @@ describe("GenerateDiagramDialog", () => {
     );
   });
 
+  it("submits prompts longer than 4,000 characters without truncating", async () => {
+    generateAiDiagram.mockResolvedValue({
+      mermaid: "flowchart LR\nA --> B",
+      model: "gemini-test",
+    });
+    const prompt = `Show this system: ${"step ".repeat(1_000)}done`;
+    render(
+      <GenerateDiagramDialog
+        isOpen
+        onClose={vi.fn()}
+        onInsert={vi.fn().mockResolvedValue(2)}
+      />,
+    );
+
+    const input = screen.getByLabelText("What should the diagram explain?");
+    expect(input).not.toHaveAttribute("maxlength");
+    fireEvent.change(input, { target: { value: prompt } });
+    fireEvent.click(
+      screen.getByRole("button", { name: "Generate and insert" }),
+    );
+
+    await waitFor(() => expect(generateAiDiagram).toHaveBeenCalledWith(prompt));
+  });
+
   it("retries once when the generated Mermaid cannot be parsed", async () => {
     generateAiDiagram
       .mockResolvedValueOnce({ mermaid: "flowchart bad", model: "gemini-test" })
@@ -89,6 +113,10 @@ describe("GenerateDiagramDialog", () => {
     await waitFor(() => expect(generateAiDiagram).toHaveBeenCalledTimes(2));
     expect(onInsert).toHaveBeenCalledTimes(2);
     expect(onInsert).toHaveBeenLastCalledWith("flowchart LR\nA --> B");
+    expect(generateAiDiagram).toHaveBeenNthCalledWith(
+      2,
+      "Show the order processing flow\n\nReturn strict Mermaid. Use no edge-label colons in flowcharts.",
+    );
   });
 
   it("keeps the prompt and shows a recoverable error", async () => {

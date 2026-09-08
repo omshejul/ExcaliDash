@@ -16,6 +16,21 @@ const EXCALIDRAW_DIST_DIR = path.join(
   "excalidraw",
   "dist"
 );
+const INTER_FONT_DIR = path.join(
+  frontendRoot,
+  "node_modules",
+  "@fontsource",
+  "inter",
+  "files"
+);
+
+const INTER_NORMAL_FONT_FILES = {
+  "Nunito-Regular-XRXI3I6Li01BKofiOc5wtlZ2di8HDIkhdTk3j6zbXWjgevT5.woff2": "inter-cyrillic-ext-500-normal.woff2",
+  "Nunito-Regular-XRXI3I6Li01BKofiOc5wtlZ2di8HDIkhdTA3j6zbXWjgevT5.woff2": "inter-cyrillic-500-normal.woff2",
+  "Nunito-Regular-XRXI3I6Li01BKofiOc5wtlZ2di8HDIkhdTs3j6zbXWjgevT5.woff2": "inter-vietnamese-500-normal.woff2",
+  "Nunito-Regular-XRXI3I6Li01BKofiOc5wtlZ2di8HDIkhdTo3j6zbXWjgevT5.woff2": "inter-latin-ext-500-normal.woff2",
+  "Nunito-Regular-XRXI3I6Li01BKofiOc5wtlZ2di8HDIkhdTQ3j6zbXWjgeg.woff2": "inter-latin-500-normal.woff2",
+};
 
 // src relative to EXCALIDRAW_DIST_DIR  →  dest name inside the target root
 const ASSET_COPIES = [
@@ -55,6 +70,16 @@ const main = async () => {
       }
 
       await copyDir(src, dest);
+
+      if (destName === "fonts") {
+        const normalFontDir = path.join(dest, "Nunito");
+        for (const [targetName, interName] of Object.entries(INTER_NORMAL_FONT_FILES)) {
+          await fs.copyFile(
+            path.join(INTER_FONT_DIR, interName),
+            path.join(normalFontDir, targetName)
+          );
+        }
+      }
 
       console.log(`[copy-excalidraw-assets] Copied ${srcRel} -> ${targetName}/${destName}`);
     }

@@ -43,6 +43,21 @@ const copyDir = async (src, dest) => {
   await fs.cp(src, dest, { recursive: true });
 };
 
+const replaceFontReferences = async (dir) => {
+  for (const entry of await fs.readdir(dir, { withFileTypes: true })) {
+    const entryPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      await replaceFontReferences(entryPath);
+    } else if (entry.name.endsWith(".js")) {
+      let contents = await fs.readFile(entryPath, "utf8");
+      for (const [nunitoName, interName] of Object.entries(INTER_NORMAL_FONT_FILES)) {
+        contents = contents.replaceAll(nunitoName, interName);
+      }
+      await fs.writeFile(entryPath, contents);
+    }
+  }
+};
+
 const getTargets = () => {
   const args = new Set(process.argv.slice(2));
   const targets = [];
@@ -73,11 +88,14 @@ const main = async () => {
 
       if (destName === "fonts") {
         const normalFontDir = path.join(dest, "Nunito");
-        for (const [targetName, interName] of Object.entries(INTER_NORMAL_FONT_FILES)) {
+        for (const [nunitoName, interName] of Object.entries(INTER_NORMAL_FONT_FILES)) {
           await fs.copyFile(
             path.join(INTER_FONT_DIR, interName),
-            path.join(normalFontDir, targetName)
+            path.join(normalFontDir, targetName === "dist" ? interName : nunitoName)
           );
+        }
+        if (targetName === "dist") {
+          await replaceFontReferences(path.join(targetRoot, "assets"));
         }
       }
 

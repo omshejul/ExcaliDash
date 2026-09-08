@@ -63,10 +63,16 @@ const getTargets = () => {
   const targets = [];
   if (args.has("--public")) targets.push("public");
   if (args.has("--dist")) targets.push("dist");
+  if (args.has("--prepare")) return targets;
   return targets.length > 0 ? targets : ["dist"];
 };
 
 const main = async () => {
+  const args = new Set(process.argv.slice(2));
+  if (args.has("--prepare")) {
+    await replaceFontReferences(EXCALIDRAW_DIST_DIR);
+  }
+
   const targets = getTargets();
 
   for (const targetName of targets) {
@@ -88,14 +94,11 @@ const main = async () => {
 
       if (destName === "fonts") {
         const normalFontDir = path.join(dest, "Nunito");
-        for (const [nunitoName, interName] of Object.entries(INTER_NORMAL_FONT_FILES)) {
+        for (const interName of Object.values(INTER_NORMAL_FONT_FILES)) {
           await fs.copyFile(
             path.join(INTER_FONT_DIR, interName),
-            path.join(normalFontDir, targetName === "dist" ? interName : nunitoName)
+            path.join(normalFontDir, interName)
           );
-        }
-        if (targetName === "dist") {
-          await replaceFontReferences(path.join(targetRoot, "assets"));
         }
       }
 

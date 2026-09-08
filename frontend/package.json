@@ -4,8 +4,8 @@
   "version": "0.5.1",
   "type": "module",
   "scripts": {
-    "dev": "node scripts/copy-excalidraw-assets.mjs --prepare --public && vite --port 6767",
-    "build": "node scripts/copy-excalidraw-assets.mjs --prepare && tsc -b && vite build && node scripts/copy-excalidraw-assets.mjs --dist",
+    "dev": "node scripts/copy-excalidraw-assets.mjs --public && vite --port 6767",
+    "build": "tsc -b && vite build && node scripts/copy-excalidraw-assets.mjs --dist",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
@@ -20,7 +20,6 @@
     "@dnd-kit/utilities": "^3.2.2",
     "@excalidraw/excalidraw": "^0.18.1",
     "@excalidraw/mermaid-to-excalidraw": "^2.2.2",
-    "@fontsource/inter": "^5.3.0",
     "@types/lodash": "^4.17.20",
     "axios": "^1.16.1",
     "clsx": "^2.1.1",
